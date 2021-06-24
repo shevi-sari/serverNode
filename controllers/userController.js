@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 var MongoClient = require('mongodb').MongoClient;
+const User=require('../modells/user');
+
 var url = "mongodb+srv://shevi_frankel:323114538@cluster0.q4hii.mongodb.net/sekerGraph?retryWrites=true&w=majority"//replace localhost with srv1 in the seminar
 
 const TOKEN_SECRET =
@@ -11,23 +13,23 @@ const generateAccessToken = (username) => {
 
 
 const signUp = (req, res) => {
-    const { email, password, name } = req.body;
+    User = req.body;
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3001');
-    const user = req.body;
-    //Adress, phone ....
+    //const user = req.body;
+   
     //Validations.
     //Check if user exists
     MongoClient.connect(url, function (err, db) {
         if (err) throw err;
 
         var dbo = db.db("sekerGraphDB");
-        var myobj = { email, password, name };
-        dbo.collection("users").insertOne(myobj, function (err, res) {
+       // var myobj = { email, password, name };
+        dbo.collection("users").insertOne(User, function (err, res) {
             if (err) throw err;
             console.log("1 document inserted");
             db.close();
         });
-        const token = generateAccessToken(user);
+        const token = generateAccessToken(User);
         console.log("token", token);
         return res.json({ token }).send();
     });
@@ -53,7 +55,7 @@ const login = (req, res) => {
             if (result[0].password = password) {
                 const token = generateAccessToken(req.params);
                 console.log("token", token);
-                return res.json({ token }).send();
+                return res.json({ token,user:result[0] }).send();
             } else {
                 return res.status(401).send();
             }

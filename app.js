@@ -10,6 +10,26 @@ var usersRouter = require('./routes/usersRouter');
 var app = express();
 
 
+
+
+const mogoose=require('mongoose');
+//dotenv.config();
+
+const connectionParams = {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useUnifiedTopology: true,
+}
+const dbc="mongodb+srv://shevi_frankel:323114538@cluster0.q4hii.mongodb.net/sekerGraphDB?retryWrites=true&w=majority";
+mogoose.connect(
+ dbc, connectionParams).then(()=>{
+      console.log('connected DB')
+  }).catch((err)=>console.log(err));
+
+
+
+
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -44,26 +64,6 @@ module.exports = app;
 
 
 
-
-
-
-
-
-
-
-//const mogoose=require('mongoose');
-//dotenv.config();
-
-// const connectionParams = {
-//   useNewUrlParser: true,
-//   useCreateIndex: true,
-//   useUnifiedTopology: true,
-// }
-// const dbc="mongodb+srv://shevi_frankel:323114538@cluster0.q4hii.mongodb.net/sekerGraph?retryWrites=true&w=majority";
-// mogoose.connect(
-//  dbc, connectionParams).then(()=>{
-//       console.log('connected DB')
-//   }).catch((err)=>console.log(err));
 
 
 

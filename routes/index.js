@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const usersRouter = require('./usersRouter');
+const formsRouter = require('./formsRouter');
 
 var MongoClient = require('mongodb').MongoClient;
 var urlToCreate = "mongodb+srv://shevi_frankel:323114538@cluster0.q4hii.mongodb.net/sekerGraph?retryWrites=true&w=majority"; //replace localhost with srv1 in the seminar
@@ -14,6 +15,8 @@ const generateAccessToken = (username) => {
   return jwt.sign({ username }, TOKEN_SECRET);
 };
 router.use('/', usersRouter);
+//router.use('/form', formsRouter);
+
 
 // router.get("/createDB", (req, res) => {
 //   MongoClient.connect(urlToCreate, function (err, db) {
@@ -28,11 +31,11 @@ router.use('/', usersRouter);
 //   });
 // })
 
-// router.get("/createUserColection", () => {
+// router.get("/createFormsColection", () => {
 //   MongoClient.connect(url, function (err, db) {
 //     if (err) throw err;
 //     var dbo = db.db("sekerGraphDB");
-//     dbo.createCollection("users", function (err, res) {
+//     dbo.createCollection("forms", function (err, res) {
 //       if (err) throw err;
 //       console.log("Collection created!");
 //       db.close();
