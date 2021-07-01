@@ -28,10 +28,22 @@ const newForm = async (req, res) => {
     }
 
 }
+
+//=============email=================
 const getEmailByForm = async (req, res) => {
     try {
         const form = await Form.findById(req.params.id)
         const listOfEmails = form.emails;
+        res.status(200).json({ listOfEmails: listOfEmails })
+    }
+    catch (err) {
+        res.status(500).json({ error: err })
+    }
+}
+const getEmailByManeger = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id)
+        const listOfEmails = user.emails;
         res.status(200).json({ listOfEmails: listOfEmails })
     }
     catch (err) {
@@ -43,23 +55,35 @@ const addEmail = async (req, res) => {
     try {
         const form = await Form.findById(req.params.formId);
         const email = (req.params.email);
-        if(!form.emails.find(e=>e==email))
-        {
-        form.emails.push(email);
-        await form.save();
-        const man = await User.findById(form.managerId);
-        man.emails.push(email);
-        await man.save();
-        const listOfEmails = form.emails;
-        return res.status(200).json({ listOfEmails: listOfEmails });
+        if (!form.emails.find(e => e == email)) {
+            form.emails.push(email);
+            await form.save();
+        }
+            const man = await User.findById(form.managerId);
+            if(!man.emails.find(e => e == email)) {
+            man.emails.push(email);
+            await man.save();
         }
         const listOfEmails = form.emails;
         return res.status(200).json({ listOfEmails: listOfEmails });
     }
     catch (err) {
-        console.log('error',err);
+        console.log('error', err);
         res.status(500).json({ error: err })
     }
 }
-
-module.exports = { getFormsById, newForm, getEmailByForm, addEmail }
+const removeEmail = async (req, res) => {
+    try {
+        const form = await Form.findById(req.params.formId);
+        const email = (req.params.email);
+        form.emails.pull(email);
+        await form.save();
+        const listOfEmails = form.emails;
+        return res.status(200).json({ listOfEmails: listOfEmails });
+    }
+    catch (err) {
+        console.log('error', err);
+        res.status(500).json({ error: err })
+    }
+}
+module.exports = { getFormsById, newForm, getEmailByForm,getEmailByManeger, addEmail, removeEmail }

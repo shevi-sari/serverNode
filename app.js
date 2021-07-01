@@ -3,16 +3,14 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var cors=require('cors')
+var cors = require('cors')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/usersRouter');
-
+var email = require('./sendEmail')
 var app = express();
 
 
-
-
-const mogoose=require('mongoose');
+const mogoose = require('mongoose');
 //dotenv.config();
 
 const connectionParams = {
@@ -20,11 +18,11 @@ const connectionParams = {
   useCreateIndex: true,
   useUnifiedTopology: true,
 }
-const dbc="mongodb+srv://shevi_frankel:323114538@cluster0.q4hii.mongodb.net/sekerGraphDB?retryWrites=true&w=majority";
+const dbc = "mongodb+srv://shevi_frankel:323114538@cluster0.q4hii.mongodb.net/sekerGraphDB?retryWrites=true&w=majority";
 mogoose.connect(
- dbc, connectionParams).then(()=>{
-      console.log('connected DB')
-  }).catch((err)=>console.log(err));
+  dbc, connectionParams).then(() => {
+    console.log('connected DB')
+  }).catch((err) => console.log(err));
 
 
 
@@ -59,7 +57,44 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
+var nodemailer = require('nodemailer');
+
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
+  requireTLS: true,
+  auth: {
+    user: ' בת-שבע פרנקל',
+    pass: '323114538'
+  }
+});
+
+var mailOptions = {
+  from: '3340sf@gmail.com',
+  to: '3340sf@gmail.com',
+  subject: 'Sending Email using Node.js',
+  text: 'That was easy!'
+};
+
+transporter.sendMail(mailOptions, function (error, info) {
+  if (error) {
+    console.log(error);
+  } else {
+    console.log('Email sent: ' + info.response);
+  }
+});
+
+
+
+
+
 app.listen(3000)
+
+
 module.exports = app;
 
 
