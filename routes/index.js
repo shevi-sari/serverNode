@@ -15,7 +15,7 @@ const generateAccessToken = (username) => {
   return jwt.sign({ username }, TOKEN_SECRET);
 };
 router.use('/', usersRouter);
-//router.use('/form', formsRouter);
+router.use('/form', formsRouter);
 
 
 // router.get("/createDB", (req, res) => {

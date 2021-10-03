@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
         ref:"forms"
     }],
     emails:[{
-        unique:true,
+        // unique:true,
         dropDups: true,
         type:String,
         match:  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/

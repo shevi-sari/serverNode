@@ -5,7 +5,7 @@ const getFormsById = async (req, res) => {
     try {
         const man = await User.findById(req.params.id).populate('forms')
         const listOfForms = man.forms;
-
+        
         res.status(200).json({ listOfForms: listOfForms })
     }
     catch (err) {
@@ -13,6 +13,51 @@ const getFormsById = async (req, res) => {
     }
 }
 
+const sendEmail = async (req, res) => {
+    try {
+        const form=await Form.findById(req.params.id);
+        const emailList=form.emails;
+        const subject=form.name;
+        sendEmailFunc(emailList,subject)
+        res.status(200).json({ emailList: emailList })
+    }
+    catch (err) {
+        res.status(500).json({ error: err })
+    }
+}
+const sendEmailFunc=(emailList,subject)=>{
+    
+var nodemailer = require('nodemailer');
+
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
+  requireTLS: true,
+  auth: {
+    user: 'sbf5003168@gmail.com',
+    pass: '0533163340'
+  }
+});
+
+var mailOptions = {
+  from: 'sbf5003168@gmail.com',
+  to: emailList,
+  subject: subject,
+  text: 'הזמנתי אותך למלא סקר'
+};
+
+transporter.sendMail(mailOptions, function (error, info) {
+  if (error) {
+    console.log(error);
+  } else {
+    console.log('Email sent: ' + info.response);
+  }
+});
+
+
+}
 const newForm = async (req, res) => {
     try {
         const form = new Form(req.body);
@@ -20,6 +65,7 @@ const newForm = async (req, res) => {
         const man = await (await User.findById(form.managerId));
         man.forms.push(form);
         await man.save();
+      
         res.status(200).json({ form: form })
 
     }
@@ -86,4 +132,4 @@ const removeEmail = async (req, res) => {
         res.status(500).json({ error: err })
     }
 }
-module.exports = { getFormsById, newForm, getEmailByForm,getEmailByManeger, addEmail, removeEmail }
+module.exports = { getFormsById, newForm,sendEmail, getEmailByForm,getEmailByManeger, addEmail, removeEmail }
