@@ -6,7 +6,8 @@ const formController = require('../controllers/formsController');
 // router.get('/form/getFormsById/:id',controller.getFormsById)
 // router.post('/form/newForm', controller.newForm);
 
-router.get('/getFormsById/:id',formController.getFormsById)
+router.get('/getFormsById/:id',formController.getFormsById);
+router.get('/getFormsByFormId/:id',formController.getFormsByFormId)
 router.post('/newForm', formController.newForm);
 
 router.get('/getEmailByForm/:id',formController.getEmailByForm);
