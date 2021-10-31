@@ -115,7 +115,7 @@ const connectionParams = {
   useCreateIndex: true,
   useUnifiedTopology: true,
 }
- const url = "mongodb+srv://shevi_frankel:323114538@cluster0.q4hii.mongodb.net/sekerGraphDB?retryWrites=true&w=majority";
+const url = "mongodb+srv://shevi_frankel:323114538@cluster0.q4hii.mongodb.net/sekerGraphDB?retryWrites=true&w=majority";
 // mongoose.connect(
 //   dbc, connectionParams).then(() => {
 //     console.log('connected DB')
@@ -193,8 +193,9 @@ app.use(function (err, req, res, next) {
 
 
 
-app.listen(3012,()=>{
-console.log('listen at port 3012')});
+app.listen(3012, () => {
+  console.log('listen at port 3012')
+});
 
 module.exports = app;
 

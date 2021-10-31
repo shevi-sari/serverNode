@@ -77,12 +77,14 @@ transporter.sendMail(mailOptions, function (error, info) {
 
 
 }
+//בדיקת כפולים
 const newForm = async (req, res) => {
     try {
         const form = new Form(req.body);
         await form.save();
-        const man = await (await User.findById(form.managerId));
+        const man = await  User.findById(form.managerId);
         man.forms.push(form);
+        man.emails.push(form.emails)
         await man.save();
       
         res.status(200).json({ form: form })

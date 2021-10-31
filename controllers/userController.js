@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 var MongoClient = require('mongodb').MongoClient;
 const User = require('../modells/user');
 
-var url = "mongodb+srv://shevi_frankel:323114538@cluster0.q4hii.mongodb.net/sekerGraph?retryWrites=true&w=majority"//replace localhost with srv1 in the seminar
+var url = "mongodb+srv://shevi_frankel:323114538@cluster0.q4hii.mongodb.net/sekerGraphDB?retryWrites=true&w=majority"//replace localhost with srv1 in the seminar
 
 const TOKEN_SECRET =
     "F9EACB0E0AB8102E999DF5E3808B215C028448E868333041026C481960EFC126";
@@ -38,7 +38,7 @@ const signUp = (req, res) => {
 const login = async (req, res) => {
     try {
         const { email, password } = req.params;
-        const user = await User.findOne({ email: email ,  password: password }).populate('forms')
+        const user = await User.findOne({ email: email, password: password }).populate('forms')
         res.status(200).json({ user: user })
         console.log(user);
     }
