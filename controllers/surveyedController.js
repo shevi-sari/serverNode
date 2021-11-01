@@ -1,5 +1,6 @@
 const Surveyed = require('../modells/surveyed');
 
+// לטפל במשתמש שהכניס טופס כפול
 
 const enteredForm = async (req, res) => {
     try {
