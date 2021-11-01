@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 var MongoClient = require('mongodb').MongoClient;
 const User = require('../modells/user');
 
-var url = "mongodb+srv://shevi_frankel:323114538@cluster0.q4hii.mongodb.net/sekerGraphDB?retryWrites=true&w=majority"//replace localhost with srv1 in the seminar
+var url = "mongodb+srv://shevi_frankel:323114538@cluster0.q4hii.mongodb.net/sekerGraphDB2?retryWrites=true&w=majority"//replace localhost with srv1 in the seminar
 
 const TOKEN_SECRET =
     "F9EACB0E0AB8102E999DF5E3808B215C028448E868333041026C481960EFC126";
@@ -12,7 +12,24 @@ const generateAccessToken = (username) => {
 };
 
 
-const signUp = (req, res) => {
+const signUp = async (req, res) => {
+    try {
+        const user = new User(req.body);
+        console.log(user);
+        await user.save();
+
+        res.status(200).json({ newUser: user })
+
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ error: err })
+    }
+
+}
+
+
+const signUp1 = (req, res) => {
     User = req.body;
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3001');
     //const user = req.body;
@@ -22,7 +39,7 @@ const signUp = (req, res) => {
     MongoClient.connect(url, function (err, db) {
         if (err) throw err;
 
-        var dbo = db.db("sekerGraphDB");
+        var dbo = db.db("sekerGraphDB2");
         // var myobj = { email, password, name };
         dbo.collection("users").insertOne(User, function (err, res) {
             if (err) throw err;
@@ -31,6 +48,7 @@ const signUp = (req, res) => {
         });
         const token = generateAccessToken(User);
         console.log("token", token);
+        console.log(err);
         return res.json({ token }).send();
     });
 };
@@ -54,7 +72,7 @@ const login1 = (req, res) => {
     console.log(email, password)
     MongoClient.connect(url, function (err, db) {
         if (err) throw err;
-        var dbo = db.db("sekerGraphDB");
+        var dbo = db.db("sekerGraphDB2");
         var query = { email };
         dbo.collection("users").find(query).toArray(function (err, result) {
             if (err) throw err;

@@ -8,7 +8,7 @@ const enteredForm = async (req, res) => {
         var man = await Surveyed.findOne({email:surveyed.email})
         if (man) {
             if (!man.forms.find(e => e.formId.equals( surveyed.forms[0].formId)))
-            man.forms.push(surveyed.forms)
+            man.forms.push(surveyed.forms[0])
             else
             res.status(304).send();
            
@@ -28,17 +28,19 @@ const enteredForm = async (req, res) => {
     // }
 
     catch (err) {
+        console.log(err);
         res.status(500).json({ error: err })
     }
 
 }
 const getRusltByFormId = async (req, res) => {
     try {
-        const form = await Form.findById(req.params.id)
+        const form = await Surveyed.find({formId:req.params.formId})
         const listOfEmails = form.emails;
         res.status(200).json({ listOfEmails: listOfEmails })
     }
     catch (err) {
+        console.log(err);
         res.status(500).json({ error: err })
     }
 }
