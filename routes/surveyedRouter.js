@@ -9,6 +9,8 @@ router.get('/getRusltByFormId/:formId', controller.getRusltByFormId);
 router.post('/enteredForm',controller.enteredForm)
 
 
+router.post('/timing/:id/:time',formController.timing);
+
 module.exports = router;
 
 

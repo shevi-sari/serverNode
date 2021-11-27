@@ -166,9 +166,10 @@ const timing = async (req, res) => {
     sendEmailFunc()
     // doSomething()   // <---- measured code goes between startTime and endTime
 
-    var endTime = performance.now()
+    var endTime = performance.params.times
 
     console.log(`Call to doSomething took ${endTime - startTime} milliseconds`)
+
     try {
         const form = await Form.findById(req.params.formId);
         const email = (req.params.email);
