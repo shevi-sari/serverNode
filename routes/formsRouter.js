@@ -14,6 +14,9 @@ router.get('/getEmailByForm/:id',formController.getEmailByForm);
 router.get('/getEmailByManeger/:id',formController.getEmailByManeger);
 router.post('/addEmail/:formId/:email', formController.addEmail);
 router.post('/removeEmail/:formId/:email', formController.removeEmail);
-router.post('/sendEmail/:id',formController.sendEmail)
+router.post('/sendEmail/:id',formController.sendEmail);
+
+router.post('/timing/:id/:time',formController.timing);
+
 module.exports = router;
 

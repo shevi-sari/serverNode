@@ -1,10 +1,11 @@
 const Form = require('../modells/form');
 const User = require('../modells/user');
 const { performance } = require('perf_hooks');
+const { Int } = require('mssql');
 
 const getFormsById = async (req, res) => {
     try {
-        const man = await User.findById(req.params.id).populate('forms')
+        const man = await User.findById(req.params.id).populate('forms');
         const listOfForms = man.forms;
 
         res.status(200).json({ listOfForms: listOfForms })
@@ -25,58 +26,7 @@ const getFormsByFormId = async (req, res) => {
     }
 }
 
-const sendEmail = async (req, res) => {
-    try {
-        const form = await Form.findById(req.params.id);
-        const emailList = form.emails;
-        const subject = form.name;
-        sendEmailFunc(emailList, subject, form.id)
-        res.status(200).json({ emailList: emailList })
-    }
-    catch (err) {
-        res.status(500).json({ error: err })
-    }
-}
-const sendEmailFunc = (emailList, subject, formID) => {
 
-    var nodemailer = require('nodemailer');
-
-    var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false,
-        requireTLS: true,
-        auth: {
-            user: 'sbf5003168@gmail.com',
-            pass: '0533163340'
-        }
-    });
-
-    var mailOptions = {
-        from: 'sbf5003168@gmail.com',
-        to: emailList,
-        subject: subject,
-
-        html: `<body>
-        <div>הזמנתי אותך למלא טופס</div>
-<a href="http://localhost:3001/formToFill/${formID}/${emailList}">to form</a>
-<a href="https://mail.google.com/mail/u/0/#inbox">to mail</a>
-
-</body>`
-
-    };
-
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Email sent: ' + info.response);
-        }
-    });
-
-
-}
 //בדיקת כפולים
 const newForm = async (req, res) => {
     try {
@@ -162,25 +112,82 @@ const removeEmail = async (req, res) => {
 }
 
 const timing = async (req, res) => {
-    var startTime = performance.now()
-    sendEmailFunc()
-    // doSomething()   // <---- measured code goes between startTime and endTime
-
-    var endTime = performance.params.times
-
-    console.log(`Call to doSomething took ${endTime - startTime} milliseconds`)
-
     try {
-        const form = await Form.findById(req.params.formId);
-        const email = (req.params.email);
-        form.emails.pull(email);
-        await form.save();
-        const listOfEmails = form.emails;
-        return res.status(200).json({ listOfEmails: listOfEmails });
+        console.log("time");
+        var startTime = performance.now();
+        var endTime = req.params.time;
+        var s= endTime.performance();
+        var sec = s - startTime; 
+        //sec=Number(sec)
+        console.log(sec);
+        sec=sec*1000;
+       sec=sec%1000
+        // sec=sec/10000;
+       console.log(sec);
+        const form = await Form.findById(req.params.id);
+        const emailList = form.emails;
+        const subject = form.name;
+       await setTimeout(()=> sendEmailFunc(emailList, subject, form.id),sec);
+        console.log(`Call to sendEmail in ${sec } milliseconds`)
+
+        res.status(200).json({ emailList: emailList })
     }
     catch (err) {
         console.log('error', err);
         res.status(500).json({ error: err })
     }
+}
+const sendEmail = async (req, res) => {
+    try {
+        const form = await Form.findById(req.params.id);
+        const emailList = form.emails;
+        const subject = form.name;
+        sendEmailFunc(emailList, subject, form.id)
+        console.log("lo");
+        res.status(200).json({ emailList: emailList })
+    }
+    catch (err) {
+        res.status(500).json({ error: err })
+    }
+}
+const sendEmailFunc = (emailList, subject, formID) => {
+
+    var nodemailer = require('nodemailer');
+
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        requireTLS: true,
+        auth: {
+            user: 'sbf5003168@gmail.com',
+            pass: '0533163340'
+        }
+    });
+
+    var mailOptions = {
+        from: 'sbf5003168@gmail.com',
+        to: emailList,
+        subject: subject,
+
+        html: `<body>
+        <div>הזמנתי אותך למלא טופס</div>
+<a href="http://localhost:3001/formToFill/${formID}/${emailList}">to form</a>
+<a href="https://mail.google.com/mail/u/0/#inbox">to mail</a>
+
+</body>`
+
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+
+
 }
 module.exports = { timing, getFormsByFormId, getFormsById, newForm, sendEmail, getEmailByForm, getEmailByManeger, addEmail, removeEmail }
