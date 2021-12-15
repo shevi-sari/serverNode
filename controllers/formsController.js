@@ -1,7 +1,8 @@
 const Form = require('../modells/form');
 const User = require('../modells/user');
+var node = require('node-schedule');
+
 const { performance } = require('perf_hooks');
-const { Int } = require('mssql');
 
 const getFormsById = async (req, res) => {
     try {
@@ -32,13 +33,14 @@ const newForm = async (req, res) => {
     try {
         const form = new Form(req.body);
         console.log(form);
-        await form.save();
+        try { await form.save(); }
+        catch (e) { console.log(e); }
         const man = await User.findById(form.managerId);
         man.forms.push(form);
-        form.emails.map((e) => {
-            console.log(e);
-            if (!man.emails.find((f) => f.equals(e)))
-                man.emails.push(e)
+        form.emails.map((email) => {
+            console.log(email);
+            if (!man.emails.find((e) => e==email))
+                man.emails.push(email)
         });
 
         await man.save();
@@ -50,7 +52,30 @@ const newForm = async (req, res) => {
         console.log(err);
         res.status(500).json({ error: err })
     }
+}
+const updateForm = async (req, res) => {
+    try {
+        const form = await Form.findByIdAndUpdate(req.params.id, req.body);
+        //console.log(form);
+        //  form=req.body;
+        //await form.save();
+        // const man = await User.findById(form.managerId);
+        // man.forms.push(form);
+        // form.emails.map((e) => {
+        //     console.log(e);
+        //     if (!man.emails.find((f) => f.equals(e)))
+        //         man.emails.push(e)
+        // });
 
+        // await man.save();
+
+        res.status(200).json({ form: form })
+
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ error: err })
+    }
 }
 
 //=============email=================
@@ -114,21 +139,25 @@ const removeEmail = async (req, res) => {
 const timing = async (req, res) => {
     try {
         console.log("time");
-        var startTime = performance.now();
+        var startTime = Number.parseInt(performance.now());
         var endTime = req.params.time;
-        var s= endTime.performance();
-        var sec = s - startTime; 
-        //sec=Number(sec)
-        console.log(sec);
-        sec=sec*1000;
-       sec=sec%1000
-        // sec=sec/10000;
-       console.log(sec);
+        var s = Number.parseInt(endTime);
+        const sec = startTime - s;
+        var dt = new Date(req.params.time);
+        console.log(" var minute =", dt.getMinutes(),
+            "var hour =", dt.getHours(),
+            "var month = ", dt.getMonth() + 1,
+            "var day =", dt.getUTCDate(),
+            "var dayWeek =", dt.getDay());
         const form = await Form.findById(req.params.id);
         const emailList = form.emails;
         const subject = form.name;
-       await setTimeout(()=> sendEmailFunc(emailList, subject, form.id),sec);
-        console.log(`Call to sendEmail in ${sec } milliseconds`)
+
+        await setTimeout(function () { console.log('hello') }
+            //sendEmailFunc(emailList, subject, form.id)}
+            , sec);
+        console.log(`Call to sendEmail in ${sec} milliseconds`)
+        console.log(`startTime: `, startTime, "endTime: ", endTime, "s: ", s, "sec: ", sec)
 
         res.status(200).json({ emailList: emailList })
     }
@@ -143,7 +172,6 @@ const sendEmail = async (req, res) => {
         const emailList = form.emails;
         const subject = form.name;
         sendEmailFunc(emailList, subject, form.id)
-        console.log("lo");
         res.status(200).json({ emailList: emailList })
     }
     catch (err) {
@@ -174,7 +202,7 @@ const sendEmailFunc = (emailList, subject, formID) => {
         html: `<body>
         <div>הזמנתי אותך למלא טופס</div>
 <a href="http://localhost:3001/formToFill/${formID}/${emailList}">to form</a>
-<a href="https://mail.google.com/mail/u/0/#inbox">to mail</a>
+
 
 </body>`
 
@@ -187,7 +215,34 @@ const sendEmailFunc = (emailList, subject, formID) => {
             console.log('Email sent: ' + info.response);
         }
     });
-
-
 }
-module.exports = { timing, getFormsByFormId, getFormsById, newForm, sendEmail, getEmailByForm, getEmailByManeger, addEmail, removeEmail }
+var sendEmailSchedule = (req, res) => {
+    var dt = new Date(req.params.time);
+    var minute = dt.getMinutes();
+    var hour = dt.getHours();
+    var month = dt.getMonth() + 1;
+    var day = dt.getUTCDate();
+    var dayOfWeek = dt.getDay();
+    node.scheduleJob(`${dt.getMinutes()} ${dt.getHours()} ${dt.getUTCDate()} ${dt.getMonth() + 1} ${dt.getDay()}`, function () {
+        console.log('Starting..');
+        init(req, res); // write your logic here to send email
+    })
+};
+
+
+const init = async (req, res) => {
+    try {
+        console.log("time");
+        const form = await Form.findById(req.params.id);
+        const emailList = form.emails;
+        const subject = form.name;
+        console.log("form:", form, "emailList", emailList, "subject:", subject);
+        sendEmailFunc(emailList, subject, form.id)
+        res.status(200).json({ emailList: emailList })
+    }
+    catch (err) {
+        console.log('error', err);
+        res.status(500).json({ error: err })
+    }
+}
+module.exports = { updateForm, sendEmailSchedule, timing, getFormsByFormId, getFormsById, newForm, sendEmail, getEmailByForm, getEmailByManeger, addEmail, removeEmail }

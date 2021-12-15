@@ -18,7 +18,7 @@
 //   useCreateIndex: true,
 //   useUnifiedTopology: true,
 // }
-// const dbc = "mongodb+srv://shevi_frankel:323114538@cluster0.q4hii.mongodb.net/sekerGraphDB?retryWrites=true&w=majority";
+// const dbc = "mongodb+srv://shevi_frankel:323114538@cluster0.q4hii.mongodb.net/sekerGraphDB3?retryWrites=true&w=majority";
 // mogoose.connect(
 //   dbc, connectionParams).then(() => {
 //     console.log('connected DB')
@@ -114,8 +114,9 @@ const connectionParams = {
   useNewUrlParser: true,
   useCreateIndex: true,
   useUnifiedTopology: true,
+  useFindAndModify: true,
 }
-const url = "mongodb+srv://shevi_frankel:323114538@cluster0.q4hii.mongodb.net/sekerGraphDB?retryWrites=true&w=majority";
+const url = "mongodb+srv://shevi_frankel:323114538@cluster0.q4hii.mongodb.net/sekerGraphDB3?retryWrites=true&w=majority";
 // mongoose.connect(
 //   dbc, connectionParams).then(() => {
 //     console.log('connected DB')
@@ -123,7 +124,7 @@ const url = "mongodb+srv://shevi_frankel:323114538@cluster0.q4hii.mongodb.net/se
 
 
 
-//const url = "mongodb://localhost:27017/sekerGraphDB";
+//const url = "mongodb://localhost:27017/sekerGraphDB3";
 mongoose.connect(url, connectionParams).then(() => {
   console.log("DB Connected with mongoose!")
 }).catch((err) => console.log(err));
